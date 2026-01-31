@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hack Club Curaçao</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        const link = document.createElement('link');
+        link.rel = 'icon';
+        link.href = 'logo.svg'; 
+        document.getElementsByTagName('head')[0].appendChild(link);
+    </script>
+    <style>
+        @font-face { font-family: 'Phantom Sans'; src: url('https://assets.hackclub.com/fonts/Phantom_Sans_0.7/Regular.woff') format('woff'); }
+        
+        body {
+            font-family: 'Phantom Sans', sans-serif;
+            margin: 0; padding: 0;
+            background: #000080;
+            color: white;
+            overflow-x: hidden;
+        }
+
+        canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            pointer-events: none;
+            opacity: 0.6;
+        }
+
+        .glass { 
+            background: rgba(255, 255, 255, 0.05); 
+            backdrop-filter: blur(16px); 
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1); 
+            border-radius: 30px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .glass:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(253, 224, 71, 0.4);
+            transform: translateY(-5px) scale(1.01);
+        }
+
+        /* --- LIQUID GLASS INTERACTION --- */
+        .btn-glass {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1.2);
+            cursor: pointer;
+            user-select: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-glass:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: #FDE047;
+            box-shadow: 0 0 20px rgba(253, 224, 71, 0.2);
+            transform: scale(1.05);
+        }
+
+        .btn-glass:active {
+            transform: scale(0.92);
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(25px);
+            border-color: rgba(253, 224, 71, 0.8);
+            box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.1s ease;
+        }
+
+        /* Logo Easter Egg Styling */
+        .logo-container {
+            cursor: pointer;
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            user-select: none;
+        }
+        
+        .logo-container:active {
+            transform: scale(0.8) rotate(-5deg);
+        }
+
+        .section-padding { padding: 80px 20px; }
+        
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #000080; }
+        ::-webkit-scrollbar-thumb { background: #FDE047; border-radius: 10px; }
+
+        .social-link:hover svg {
+            transform: rotate(10deg) scale(1.1);
+            fill: #FDE047;
+        }
+        svg { transition: all 0.3s ease; }
+    </style>
+</head>
+<body>
+
+    <canvas id="three-canvas"></canvas>
+
+    <!-- Navbar -->
+    <nav class="fixed top-0 w-full p-4 md:p-8 flex justify-between items-center z-50">
+        <div id="logo-easter-egg" class="logo-container p-2 rounded-xl bg-transparent">
+            <img src="logo.svg" alt="Hack Club Curaçao" class="h-8 md:h-10 w-auto rounded-lg">
+        </div>
+        
+        <div class="flex gap-2 md:gap-4 font-bold uppercase tracking-widest text-[9px] md:text-[10px]">
+            <a href="#about" class="btn-glass px-3 md:px-5 py-2 rounded-full">About</a>
+            <a href="#contact" class="btn-glass px-3 md:px-5 py-2 rounded-full">Contact</a>
+            <a href="signup/signup.html" class="btn-glass px-4 md:px-6 py-2 md:py-2.5 rounded-xl md:rounded-2xl font-black uppercase tracking-tighter text-[9px] md:text-xs shadow-xl">
+                Join
+            </a>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="min-h-screen flex flex-col justify-center items-center text-center px-4">
+        <div class="glass p-10 md:p-20 shadow-2xl max-w-5xl">
+            <h1 class="text-6xl sm:text-7xl md:text-9xl font-black italic tracking-tighter uppercase leading-[0.85] mb-6">
+                Build<br><span class="text-yellow-400">Different.</span>
+            </h1>
+            <p class="text-lg md:text-2xl font-medium opacity-90 max-w-2xl mx-auto mb-10">
+                The student-led coding community in Curaçao. We ship real projects, hardware, and code.
+            </p>
+            <div class="h-2 w-24 bg-yellow-400 mx-auto rounded-full shadow-[0_0_30px_rgba(250,204,21,0.8)]"></div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="section-padding max-w-6xl mx-auto grid md:grid-cols-2 gap-10">
+        <div class="glass p-8 md:p-10">
+            <h2 class="text-4xl font-black uppercase italic mb-6">What we do</h2>
+            <p class="text-lg opacity-80 leading-relaxed mb-6">
+                We are a proud chapter of <a href="https://hackclub.com" target="_blank" class="text-yellow-400 underline hover:opacity-80">Hack Club</a>, a global non-profit community for student makers. 
+            </p>
+            <p class="text-lg opacity-80 leading-relaxed mb-6">
+                <strong>Club Meetings:</strong> We get together to enjoy the evening, code in groups, and work on our projects. It's a space to learn from mistakes and build cool things.
+            </p>
+            <p class="text-lg opacity-80 leading-relaxed mb-6">
+                <strong>Hackathons:</strong> Huge events where everyone is invited to show off what they've built, code together, and just have fun.
+            </p>
+            <p class="text-lg opacity-80 leading-relaxed">
+                <strong>YSWS:</strong> "You Ship, We Ship" — build a project, share it with the world, and get free hardware or stickers from the global community.
+            </p>
+        </div>
+        <div class="glass p-8 md:p-10 flex flex-col justify-center border-yellow-400/20">
+            <h2 class="text-4xl font-black uppercase italic mb-6 text-yellow-400">The Vibes</h2>
+            <ul class="space-y-4 text-xl font-bold italic">
+                <li class="flex items-center gap-3 transition-all hover:translate-x-2"><span class="text-yellow-400">⚡</span> LEARN BY DOING</li>
+                <li class="flex items-center gap-3 transition-all hover:translate-x-2"><span class="text-yellow-400">🛠️</span> HARDWARE & SPRINTING</li>
+                <li class="flex items-center gap-3 transition-all hover:translate-x-2"><span class="text-yellow-400">🚢</span> GLOBAL NETWORK</li>
+                <li class="flex items-center gap-3 transition-all hover:translate-x-2"><span class="text-yellow-400">🤝</span> 100% STUDENT LED</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="section-padding text-center">
+        <div class="glass p-10 md:p-12 max-w-4xl mx-auto">
+            <h2 class="text-5xl font-black uppercase italic mb-8 tracking-tighter">Connect with us</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-12">
+                <a href="https://discord.gg/JEedWHcN" target="_blank" class="social-link btn-glass flex items-center justify-center gap-4 px-6 py-5 rounded-2xl text-xl font-black uppercase italic">
+                    <svg class="w-8 h-8 fill-white" viewBox="0 0 24 24"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.419 0 1.334-.956 2.419-2.157 2.419zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.419 0 1.334-.946 2.419-2.157 2.419z"/></svg>
+                    Discord
+                </a>
+                <a href="https://www.instagram.com/hackclubcw/" target="_blank" class="social-link btn-glass flex items-center justify-center gap-4 px-6 py-5 rounded-2xl text-xl font-black uppercase italic">
+                    <svg class="w-8 h-8 fill-white" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                    Insta
+                </a>
+                <a href="mailto:hackclubcw@curahack.club" class="social-link btn-glass flex items-center justify-center gap-4 px-6 py-5 rounded-2xl text-xl font-black uppercase italic">
+                    <svg class="w-8 h-8 fill-none stroke-white" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                    Email
+                </a>
+            </div>
+            <p class="opacity-40 text-xs font-bold uppercase tracking-widest">© 2026 Hack Club Curaçao • Made for the makers</p>
+        </div>
+    </section>
+
+    <script>
+        let scene, camera, renderer, knot, particles;
+        const isLowEnd = () => (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4);
+
+        function init3D() {
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('three-canvas'), alpha: true, antialias: !isLowEnd(), powerPreference: "high-performance" });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+            const geometry = new THREE.TorusKnotGeometry(10, 3, isLowEnd() ? 64 : 100, 16);
+            knot = new THREE.Mesh(geometry, new THREE.MeshNormalMaterial({ wireframe: true }));
+            scene.add(knot);
+
+            const pCount = isLowEnd() ? 500 : 1500;
+            const pos = new Float32Array(pCount * 3);
+            for(let i=0; i<pCount*3; i++) pos[i] = (Math.random() - 0.5) * 100;
+            const pGeo = new THREE.BufferGeometry();
+            pGeo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+            particles = new THREE.Points(pGeo, new THREE.PointsMaterial({ color: 0xFDE047, size: 0.15 }));
+            scene.add(particles);
+
+            camera.position.z = 35;
+
+            function animate() {
+                requestAnimationFrame(animate);
+                knot.rotation.x += 0.003; knot.rotation.y += 0.005;
+                const scrollPos = window.scrollY;
+                camera.position.z += ((35 - (scrollPos * 0.03)) - camera.position.z) * 0.05;
+                knot.rotation.z = scrollPos * 0.0005;
+                particles.rotation.y -= 0.0005;
+                renderer.render(scene, camera);
+            }
+            animate();
+        }
+
+        const logo = document.getElementById('logo-easter-egg');
+        logo.addEventListener('click', () => {
+            knot.rotation.y += 5;
+            knot.rotation.x += 2;
+            document.body.style.transition = 'background 0.5s';
+            document.body.style.background = '#0000A0';
+            setTimeout(() => { document.body.style.background = '#000080'; }, 500);
+            logo.animate([
+                { transform: 'scale(1)' },
+                { transform: 'scale(1.5) rotate(360deg)' },
+                { transform: 'scale(1)' }
+            ], { duration: 600, easing: 'cubic-bezier(0.175, 0.885, 0.32, 1.275)' });
+        });
+
+        window.onload = init3D;
+        window.onresize = () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        };
+    </script>
+</body>
+</html>

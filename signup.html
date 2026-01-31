@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Club Signup</title>
+<script>
+  const link = document.createElement('link');
+  link.rel = 'icon';
+  link.href = 'logo.svg'; 
+  document.getElementsByTagName('head')[0].appendChild(link);
+</script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css"/>
+<style>
+  @font-face { font-family: 'Phantom Sans'; src: url('https://assets.hackclub.com/fonts/Phantom_Sans_0.7/Regular.woff') format('woff'); }
+  
+  :root { --primary: #2d7ff9; --white: #ffffff; }
+  
+  body {
+    font-family: 'Phantom Sans', sans-serif;
+    margin: 0; padding: 0;
+    height: 100vh;
+    overflow: hidden;
+    background: linear-gradient(150deg, #000080, #FDE047);  
+    display: flex; justify-content: center; align-items: center;
+  }
+
+  /* --- CONTINUOUS FLOWING BACKGROUND --- */
+  .circles { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; z-index: -1; margin: 0; padding: 0; }
+  .circles li { position: absolute; display: block; list-style: none; width: 20px; height: 20px; background: rgba(255, 255, 255, 0.15); bottom: -150px; animation: floatUp 25s infinite linear; }
+  .circles li:nth-child(1) { left: 25%; width: 80px; height: 80px; animation-delay: -5s; border-radius: 50%; }
+  .circles li:nth-child(2) { left: 10%; width: 30px; height: 30px; animation-delay: -12s; animation-duration: 20s; border-radius: 0%; }
+  .circles li:nth-child(3) { left: 70%; width: 50px; height: 50px; animation-delay: -2s; animation-duration: 30s; border-radius: 20%; transform: rotate(45deg); }
+  .circles li:nth-child(4) { left: 40%; width: 60px; height: 60px; animation-delay: -18s; border-radius: 50%; }
+  .circles li:nth-child(5) { left: 65%; width: 25px; height: 25px; animation-delay: -25s; border-radius: 0%; }
+  .circles li:nth-child(6) { left: 85%; width: 90px; height: 90px; animation-delay: -8s; animation-duration: 40s; border-radius: 10px; }
+  .circles li:nth-child(7) { left: 15%; width: 45px; height: 45px; animation-delay: -15s; border-radius: 50%; }
+  .circles li:nth-child(8) { left: 55%; width: 35px; height: 35px; animation-delay: -22s; animation-duration: 18s; transform: rotate(20deg); }
+  .circles li:nth-child(9) { left: 33%; width: 15px; height: 15px; animation-delay: -10s; border-radius: 50%; }
+  .circles li:nth-child(10) { left: 90%; width: 40px; height: 40px; animation-delay: -30s; border-radius: 0%; }
+
+  @keyframes floatUp {
+    0%{ transform: translateY(0) rotate(0deg); opacity: 0; }
+    20%{ opacity: 0.6; }
+    100%{ transform: translateY(-110vh) rotate(360deg); opacity: 0; }
+  }
+
+  /* Form Card */
+  #regForm { 
+    background: var(--white); 
+    padding: 40px; 
+    border-radius: 20px; 
+    width: 90%; 
+    max-width: 500px; 
+    box-shadow: 0 15px 35px rgba(0,0,0,0.2); 
+    position: relative; 
+    min-height: 450px; 
+    display: flex; 
+    flex-direction: column; 
+    justify-content: center; 
+  }
+
+  h1 { text-align: center; color: var(--primary); margin-top: 0; }
+
+  .logo { 
+    display: block; margin: 0 auto 25px; max-height: 80px; max-width: 80%; width: auto; 
+    object-fit: contain; border-radius: 15px; cursor: grab; user-select: none; -webkit-user-drag: none;
+    transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1), filter 0.3s ease;
+  }
+
+  .logo.is-pulling { cursor: grabbing; filter: opacity(0.6) blur(2px); background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(5px); }
+
+  /* Inputs */
+  input { padding: 15px; width: 100%; font-size: 17px; font-family: 'Phantom Sans'; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 10px; box-sizing: border-box; transition: 0.3s; }
+  input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 8px rgba(45, 127, 249, 0.2); }
+  input.invalid { border-color: #ff4d4d; background-color: #fff8f8; }
+  .error-msg { color: #ff4d4d; font-size: 13px; display: none; margin-bottom: 15px; margin-top: -5px; font-weight: bold; }
+
+  /* --- APPLE LIQUID GLASS BUTTONS --- */
+  .btn-group { display: flex; justify-content: space-between; margin-top: auto; padding-top: 20px; gap: 15px; }
+
+  button {
+    position: relative;
+    background: linear-gradient(150deg, #00008057, #FDE047);
+    backdrop-filter: blur(calc(12px + (var(--press, 0) * 12px))) saturate(180%);
+    -webkit-backdrop-filter: blur(calc(12px + (var(--press, 0) * 12px))) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #fff;
+    padding: 14px 28px;
+    font-size: 16px;
+    font-weight: 800;
+    border-radius: 14px;
+    cursor: pointer;
+    font-family: 'Phantom Sans';
+    transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), background 0.3s ease, backdrop-filter 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    transform: scale(calc(1 + (var(--press, 0) * 0.08))) translateY(calc(var(--press, 0) * -2px));
+    user-select: none;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
+  }
+
+  /* Round Home Button - MOVED TO TOP LEFT */
+  .home-btn {
+    position: absolute; top: 15px; left: 15px; width: 45px; height: 45px;
+    border-radius: 50% !important; padding: 0 !important; display: flex;
+    justify-content: center; align-items: center; z-index: 100;
+    background: linear-gradient(150deg, #00008057, #FDE047) !important;
+  }
+  .home-btn svg { width: 22px; height: 22px; fill: white; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.5)); }
+
+  .tab { display: none; animation: fadeEffect 0.6s; flex-grow: 1; }
+  @keyframes fadeEffect { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  .iti { width: 100%; margin-bottom: 10px; }
+</style>
+</head>
+<body>
+
+<ul class="circles">
+  <li></li><li></li><li></li><li></li><li></li>
+  <li></li><li></li><li></li><li></li><li></li>
+</ul>
+
+<form id="regForm" action="">
+  <button type="button" class="home-btn" onclick="window.location.href='../index.html'">
+    <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+  </button>
+
+  <img src="logo.svg" alt="Club Logo" class="logo" title="Double click to go home">
+
+  <div class="tab">
+    <h1>Welcome!</h1>
+    <p style="text-align:center;">Let's get you signed up.</p>
+    <input type="text" placeholder="First Name" name="fname" oninput="this.className = ''">
+    <input type="text" placeholder="Last Name" name="lname" oninput="this.className = ''">
+  </div>
+
+  <div class="tab">
+    <h1>Contact Info</h1>
+    <input type="tel" id="phone" name="phone_raw">
+    <span class="error-msg" id="phone-error">Please enter a valid phone number.</span>
+    <input type="email" placeholder="Email Address" name="email" oninput="this.className = ''">
+    <span class="error-msg" id="email-error">Invalid email format</span>
+    <label style="display:block; margin-top: 15px; margin-bottom: 5px; color: #666;">Date of Birth (13-18 only)</label>
+    <input type="date" name="dob" id="dob">
+    <span class="error-msg" id="age-error">Aged 13–18 only.</span>
+  </div>
+
+  <div class="tab">
+    <h1>Emergency Contact 1</h1>
+    <input type="text" placeholder="Guardian First Name" name="ec1_fname">
+    <input type="text" placeholder="Guardian Last Name" name="ec1_lname">
+    <input type="tel" id="ec1_phone" name="ec1_phone_raw">
+    <input type="email" placeholder="Guardian Email" name="ec1_email">
+  </div>
+
+  <div class="tab">
+    <h1>Emergency Contact 2</h1>
+    <input type="text" placeholder="First Name (Optional)" name="ec2_fname">
+    <input type="text" placeholder="Last Name (Optional)" name="ec2_lname">
+    <input type="tel" id="ec2_phone" name="ec2_phone_raw">
+    <input type="email" placeholder="Email (Optional)" name="ec2_email">
+  </div>
+
+  <div class="tab" id="thankYou" style="text-align: center;">
+    <h1>All set!</h1>
+    <p>We'll be in touch soon!</p>
+    <div style="background: #eef2ff; padding: 15px; border-radius: 10px; margin-top: 30px; border: 2px dashed var(--primary);">
+        <strong>Important:</strong> Bring ID to the first meeting.<br>Opening Feb 7th, 2026! 🎉
+    </div>
+  </div>
+
+  <div class="btn-group" id="btnDiv">
+    <button type="button" id="prevBtn" onclick="nextPrev(-1)">Back</button>
+    <button type="button" id="nextBtn" onclick="nextPrev(1)">Next Step</button>
+  </div>
+</form>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+<script>
+let currentTab = 0;
+showTab(currentTab);
+
+const phoneOpts = { utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js", separateDialCode: true };
+const phoneInput = window.intlTelInput(document.querySelector("#phone"), phoneOpts);
+const ec1PhoneInput = window.intlTelInput(document.querySelector("#ec1_phone"), phoneOpts);
+const ec2PhoneInput = window.intlTelInput(document.querySelector("#ec2_phone"), phoneOpts);
+
+function showTab(n) {
+  let x = document.getElementsByClassName("tab");
+  x[n].style.display = "flex";
+  x[n].style.flexDirection = "column";
+  document.getElementById("prevBtn").style.visibility = (n == 0) ? "hidden" : "visible";
+  if (n == (x.length - 2)) document.getElementById("nextBtn").innerHTML = "Submit Signup";
+  else document.getElementById("nextBtn").innerHTML = "Next Step";
+  if (n == x.length - 1) document.getElementById("btnDiv").style.display = "none";
+}
+
+function nextPrev(n) {
+  let x = document.getElementsByClassName("tab");
+  if (n == 1 && !validateForm()) return false;
+  x[currentTab].style.display = "none";
+  currentTab = currentTab + n;
+  if (currentTab >= x.length - 1) submitForm();
+  showTab(currentTab);
+}
+
+// APPLY HAPTIC ELASTIC EFFECT
+function initHaptics() {
+    const btns = document.querySelectorAll('button');
+    btns.forEach(btn => {
+        const press = () => btn.style.setProperty('--press', '1');
+        const release = () => btn.style.setProperty('--press', '0');
+        btn.addEventListener('mousedown', press);
+        btn.addEventListener('mouseup', release);
+        btn.addEventListener('mouseleave', release);
+        btn.addEventListener('touchstart', press, {passive: true});
+        btn.addEventListener('touchend', release);
+    });
+}
+initHaptics();
+
+function validateForm() {
+  let valid = true;
+  let x = document.getElementsByClassName("tab");
+  let inputs = x[currentTab].querySelectorAll("input:not([type=tel])");
+  for (let i = 0; i < inputs.length; i++) {
+    if (currentTab == 3 && inputs[i].value.trim() == "") continue;
+    if (inputs[i].value.trim() == "" && currentTab != 3) { inputs[i].className += " invalid"; valid = false; }
+  }
+  if (currentTab == 1) {
+    if (!phoneInput.isValidNumber()) { document.getElementById("phone-error").style.display = "block"; valid = false; }
+    else { document.getElementById("phone-error").style.display = "none"; }
+  }
+  return valid;
+}
+
+function submitForm() {
+  const formData = new FormData(document.getElementById("regForm"));
+  formData.set('phone_final', phoneInput.getNumber());
+  fetch('https://formspree.io/f/mykkwgyl', { method: 'POST', body: formData, headers: { 'Accept': 'application/json' } });
+}
+
+// LOGO PHYSICS + DOUBLE CLICK
+const logo = document.querySelector('.logo');
+let isDragging = false;
+let startX, startY;
+
+logo.addEventListener('dblclick', () => { window.location.href = '../index.html'; });
+
+const startDrag = (e) => {
+  isDragging = true;
+  logo.classList.add('is-pulling');
+  const pos = e.touches ? e.touches[0] : e;
+  startX = pos.clientX; startY = pos.clientY;
+};
+
+const doDrag = (e) => {
+  if (!isDragging) return;
+  const pos = e.touches ? e.touches[0] : e;
+  const moveX = (pos.clientX - startX) / 3;
+  const moveY = (pos.clientY - startY) / 3;
+  logo.style.transform = `translate(${moveX}px, ${moveY}px) scale(1.1)`;
+};
+
+const stopDrag = () => {
+  isDragging = false;
+  logo.classList.remove('is-pulling');
+  logo.style.transform = `translate(0px, 0px) scale(1)`;
+};
+
+logo.addEventListener('mousedown', startDrag);
+window.addEventListener('mousemove', doDrag);
+window.addEventListener('mouseup', stopDrag);
+logo.addEventListener('touchstart', startDrag, {passive: true});
+window.addEventListener('touchmove', doDrag, {passive: false});
+window.addEventListener('touchend', stopDrag);
+
+// DEV SHORTCUT
+document.addEventListener('keydown', (e) => {
+  if (e.key.toLowerCase() === 'd') {
+    let x = document.getElementsByClassName("tab");
+    x[currentTab].style.display = "none";
+    currentTab = (currentTab + 1) % x.length;
+    showTab(currentTab);
+  }
+});
+</script>
+</body>
+</html>
