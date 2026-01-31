@@ -275,15 +275,8 @@ logo.addEventListener('touchstart', startDrag, {passive: true});
 window.addEventListener('touchmove', doDrag, {passive: false});
 window.addEventListener('touchend', stopDrag);
 
-// DEV SHORTCUT
-document.addEventListener('keydown', (e) => {
-  if (e.key.toLowerCase() === 'd') {
-    let x = document.getElementsByClassName("tab");
-    x[currentTab].style.display = "none";
-    currentTab = (currentTab + 1) % x.length;
-    showTab(currentTab);
-  }
-});
+
 </script>
 </body>
+
 </html>
