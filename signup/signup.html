@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Club Signup</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
   const link = document.createElement('link');
   link.rel = 'icon';
@@ -11,21 +12,41 @@
   document.getElementsByTagName('head')[0].appendChild(link);
 </script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css"/>
+
 <style>
   @font-face { font-family: 'Phantom Sans'; src: url('https://assets.hackclub.com/fonts/Phantom_Sans_0.7/Regular.woff') format('woff'); }
   
   :root { --primary: #2d7ff9; --white: #ffffff; }
-  
+  #canvas-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  pointer-events: auto;
+}
+
+#three-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1; 
+  pointer-events: none;
+}
+
   body {
     font-family: 'Phantom Sans', sans-serif;
     margin: 0; padding: 0;
     height: 100vh;
     overflow: hidden;
-    background: #000080;
+    background: transparent;
     overflow-y: auto;  
     display: flex; justify-content: center; align-items: center;
   }
-
+html { background: #000080; }
  #regForm h1, 
 #regForm p, 
 #regForm label, 
@@ -36,7 +57,7 @@
 #regForm p { 
   opacity: 0.9; 
 }
-/* Fix the 'Important' box on the last page */
+
 #thankYou div {
   background: rgba(253, 224, 71, 0.15) !important;
   color: #ffffff !important;
@@ -66,7 +87,6 @@
   border-color: rgba(253, 224, 71, 0.4);
   }
 
-
   h1 { text-align: center; color: var(--primary); margin-top: 0; }
 
   .logo { 
@@ -77,13 +97,11 @@
 
   .logo.is-pulling { cursor: grabbing; filter: opacity(0.6) blur(2px); background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(5px); }
 
-  /* Inputs */
   input { padding: 15px; width: 100%; font-size: 17px; font-family: 'Phantom Sans'; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 10px; box-sizing: border-box; transition: 0.3s; }
   input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 8px rgba(45, 127, 249, 0.2); }
   input.invalid { border-color: #ff4d4d; background-color: #fff8f8; }
   .error-msg { color: #ff4d4d; font-size: 13px; display: none; margin-bottom: 15px; margin-top: -5px; font-weight: bold; }
 
-  /* --- APPLE LIQUID GLASS BUTTONS --- */
   .btn-group { display: flex; justify-content: space-between; margin-top: auto; padding-top: 20px; gap: 15px; }
 
   button {
@@ -116,7 +134,6 @@ button:active {
   transition: all 0.1s ease;
 }
 
-  /* Round Home Button - MOVED TO TOP LEFT */
   .home-btn {
     position: absolute; top: 15px; left: 15px; width: 45px; height: 45px;
     border-radius: 50% !important; padding: 0 !important; display: flex;
@@ -129,38 +146,12 @@ button:active {
   .tab { display: none; animation: fadeEffect 0.6s; flex-grow: 1; }
   @keyframes fadeEffect { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
   .iti { width: 100%; margin-bottom: 10px; }
-
-
-  #canvas-container {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: -1;
-  pointer-events: none;
-}
-
-
-
-
-#three-canvas {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  z-index: -1; /* Behind everything */
-  pointer-events: none;
-}
 </style>
 </head>
 <body>
   <div id="canvas-container"></div>
   <canvas id="three-canvas"></canvas>
   
-
-
 <form id="regForm" action="">
   <button type="button" class="home-btn" onclick="window.location.href='../index.html'">
     <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
@@ -218,8 +209,74 @@ button:active {
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
 <script>
+// --- 3D SCENE SCRIPT ---
+let scene, camera, renderer, shape, stars;
+let isThreeDragging = false; // Renamed to avoid conflict
+
+function init3D() {
+  const canvas = document.getElementById('three-canvas');
+  if (!canvas) return;
+  scene = new THREE.Scene();
+  camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+  renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  const geometry = new THREE.DodecahedronGeometry(15, 0); 
+  const material = new THREE.MeshNormalMaterial({ wireframe: true, transparent: true, opacity: 0.7 });
+  shape = new THREE.Mesh(geometry, material);
+  scene.add(shape);
+  const starCount = 1000;
+  const starGeo = new THREE.BufferGeometry();
+  const positions = new Float32Array(starCount * 3);
+  for (let i = 0; i < starCount * 3; i++) { positions[i] = (Math.random() - 0.5) * 300; }
+  starGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  stars = new THREE.Points(starGeo, new THREE.PointsMaterial({ color: 0xFDE047, size: 0.6 }));
+  scene.add(stars);
+  camera.position.z = 50;
+
+  const onMove = (e) => {
+    if (!isThreeDragging || !shape) return;
+    const pos = e.touches ? e.touches[0] : e;
+    const vector = new THREE.Vector3((pos.clientX / window.innerWidth) * 2 - 1, -(pos.clientY / window.innerHeight) * 2 + 1, 0.5);
+    vector.unproject(camera);
+    const dir = vector.sub(camera.position).normalize();
+    const distance = -camera.position.z / dir.z;
+    const newPos = camera.position.clone().add(dir.multiplyScalar(distance));
+    shape.position.set(newPos.x, newPos.y, 0);
+  };
+
+  window.addEventListener('mousedown', () => { isThreeDragging = true; });
+  window.addEventListener('mouseup', () => { isThreeDragging = false; });
+  window.addEventListener('mousemove', onMove);
+  window.addEventListener('touchstart', () => { isThreeDragging = true; });
+  window.addEventListener('touchend', () => { isThreeDragging = false; });
+  window.addEventListener('touchmove', onMove);
+  window.addEventListener('mousedown', (e) => { 
+  if (e.target.id === 'three-canvas') isThreeDragging = true; 
+});
+
+
+
+
+  function animate() {
+    requestAnimationFrame(animate);
+    if (!isThreeDragging) { shape.rotation.x += 0.005; shape.rotation.y += 0.008; }
+    stars.rotation.y += 0.0003;
+    renderer.render(scene, camera);
+  }
+  animate();
+  window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  });
+}
+
+// --- FORM LOGIC ---
 let currentTab = 0;
-showTab(currentTab);
+window.onload = () => {
+  init3D();
+  showTab(currentTab);
+};
 
 const phoneOpts = { utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js", separateDialCode: true };
 const phoneInput = window.intlTelInput(document.querySelector("#phone"), phoneOpts);
@@ -245,7 +302,6 @@ function nextPrev(n) {
   showTab(currentTab);
 }
 
-// APPLY HAPTIC ELASTIC EFFECT
 function initHaptics() {
     const btns = document.querySelectorAll('button');
     btns.forEach(btn => {
@@ -263,14 +319,47 @@ initHaptics();
 function validateForm() {
   let valid = true;
   let x = document.getElementsByClassName("tab");
-  let inputs = x[currentTab].querySelectorAll("input:not([type=tel])");
-  for (let i = 0; i < inputs.length; i++) {
-    if (currentTab == 3 && inputs[i].value.trim() == "") continue;
-    if (inputs[i].value.trim() == "" && currentTab != 3) { inputs[i].className += " invalid"; valid = false; }
-  }
-  if (currentTab == 1) {
-    if (!phoneInput.isValidNumber()) { document.getElementById("phone-error").style.display = "block"; valid = false; }
-    else { document.getElementById("phone-error").style.display = "none"; }
+  let inputs = x[currentTab].querySelectorAll("input");
+  
+  if (currentTab < 3) {
+    for (let i = 0; i < inputs.length; i++) {
+      if (inputs[i].value.trim() === "") {
+        inputs[i].classList.add("invalid");
+        valid = false;
+      } else {
+        inputs[i].classList.remove("invalid");
+      }
+    }
+
+    if (currentTab === 1) {
+      const emailInput = document.querySelector('input[name="email"]');
+      const emailError = document.getElementById("email-error");
+      const phoneError = document.getElementById("phone-error");
+      const ageError = document.getElementById("age-error");
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      const isEmailValid = emailRegex.test(emailInput.value);
+      const isPhoneValid = phoneInput.isValidNumber();
+      const dobValue = document.getElementById("dob").value;
+      let isAgeValid = false;
+      if (dobValue) {
+        const birthDate = new Date(dobValue);
+        const age = Math.floor((new Date() - birthDate) / 31557600000);
+        isAgeValid = (age >= 13 && age <= 18);
+      }
+      emailError.style.display = isEmailValid ? "none" : "block";
+      phoneError.style.display = isPhoneValid ? "none" : "block";
+      ageError.style.display = isAgeValid ? "none" : "block";
+      if (!isEmailValid || !isPhoneValid || !isAgeValid) valid = false;
+    }
+    
+    if (currentTab === 2) {
+      if (!ec1PhoneInput.isValidNumber()) {
+        document.querySelector("#ec1_phone").classList.add("invalid");
+        valid = false;
+      } else {
+        document.querySelector("#ec1_phone").classList.remove("invalid");
+      }
+    }
   }
   return valid;
 }
@@ -281,22 +370,27 @@ function submitForm() {
   fetch('https://formspree.io/f/mykkwgyl', { method: 'POST', body: formData, headers: { 'Accept': 'application/json' } });
 }
 
-// LOGO PHYSICS + DOUBLE CLICK
+// LOGO PHYSICS
 const logo = document.querySelector('.logo');
-let isDragging = false;
+let isLogoDragging = false; // Renamed to avoid conflict
 let startX, startY;
 
 logo.addEventListener('dblclick', () => { window.location.href = '../index.html'; });
 
 const startDrag = (e) => {
-  isDragging = true;
+  isLogoDragging = true;
   logo.classList.add('is-pulling');
   const pos = e.touches ? e.touches[0] : e;
   startX = pos.clientX; startY = pos.clientY;
+  const startDrag = (e) => {
+  e.stopPropagation(); // Stops background from moving
+  isLogoDragging = true;
+  // ... rest of code
+};
 };
 
 const doDrag = (e) => {
-  if (!isDragging) return;
+  if (!isLogoDragging) return;
   const pos = e.touches ? e.touches[0] : e;
   const moveX = (pos.clientX - startX) / 3;
   const moveY = (pos.clientY - startY) / 3;
@@ -304,7 +398,7 @@ const doDrag = (e) => {
 };
 
 const stopDrag = () => {
-  isDragging = false;
+  isLogoDragging = false;
   logo.classList.remove('is-pulling');
   logo.style.transform = `translate(0px, 0px) scale(1)`;
 };
@@ -317,101 +411,25 @@ window.addEventListener('touchmove', doDrag, {passive: false});
 window.addEventListener('touchend', stopDrag);
 
 
-function validateForm() {
-  let valid = true;
-  let x = document.getElementsByClassName("tab");
-  
-  // Get all inputs in the current tab
-  let inputs = x[currentTab].querySelectorAll("input");
-  
-  // Tabs 0 (Welcome), 1 (Contact), and 2 (Emergency Contact 1) are required
-  // Tab 3 (Emergency Contact 2) is optional
-  if (currentTab < 3) {
-    // Basic empty field check
-    for (let i = 0; i < inputs.length; i++) {
-      if (inputs[i].value.trim() === "") {
-        inputs[i].classList.add("invalid");
-        valid = false;
-      } else {
-        inputs[i].classList.remove("invalid");
-      }
-    }
-
-    // Specific validation and error message display for Contact Info tab
-    if (currentTab === 1) {
-      const emailInput = document.querySelector('input[name="email"]');
-      const emailError = document.getElementById("email-error");
-      const phoneError = document.getElementById("phone-error");
-      const ageError = document.getElementById("age-error");
-      
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      const isEmailValid = emailRegex.test(emailInput.value);
-      const isPhoneValid = phoneInput.isValidNumber();
-      
-      // Age check logic
-      const dobValue = document.getElementById("dob").value;
-      let isAgeValid = false;
-      if (dobValue) {
-        const birthDate = new Date(dobValue);
-        const age = Math.floor((new Date() - birthDate) / 31557600000);
-        isAgeValid = (age >= 13 && age <= 18);
-      }
-
-      // Toggle Visibility of error messages
-      emailError.style.display = isEmailValid ? "none" : "block";
-      phoneError.style.display = isPhoneValid ? "none" : "block";
-      ageError.style.display = isAgeValid ? "none" : "block";
-
-      if (!isEmailValid || !isPhoneValid || !isAgeValid) valid = false;
-    }
-    
-    // Specific validation for Emergency Contact 1 phone
-    if (currentTab === 2) {
-      if (!ec1PhoneInput.isValidNumber()) {
-        document.querySelector("#ec1_phone").classList.add("invalid");
-        valid = false;
-      } else {
-        document.querySelector("#ec1_phone").classList.remove("invalid");
-      }
-    }
+document.addEventListener('keydown', (e) => {
+  if (e.key.toLowerCase() === 'd') {
+    let x = document.getElementsByClassName("tab");
+    x[currentTab].style.display = "none";
+    currentTab = (currentTab + 1) % x.length;
+    showTab(currentTab);
   }
+});
 
-  return valid;
-}
 
-let scene, camera, renderer, sphere;
 
-function init3D() {
-  scene = new THREE.Scene();
-  camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-  renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('three-canvas'), alpha: true, antialias: true });
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  
-  // Cool wireframe sphere like the main site
-  const geometry = new THREE.IcosahedronGeometry(10, 2);
-  const material = new THREE.MeshNormalMaterial({ wireframe: true, transparent: true, opacity: 0.5 });
-  sphere = new THREE.Mesh(geometry, material);
-  scene.add(sphere);
-
-  camera.position.z = 30;
-
-  function animate() {
-    requestAnimationFrame(animate);
-    sphere.rotation.x += 0.005;
-    sphere.rotation.y += 0.005;
-    renderer.render(scene, camera);
-  }
-  animate();
-}
-
-// Add this line inside your existing showTab(n) function:
-// sphere.scale.set(1 + n * 0.3, 1 + n * 0.3, 1 + n * 0.3);
-
-window.addEventListener('load', init3D);
-
+document.querySelectorAll('button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    if (navigator.vibrate) {
+      navigator.vibrate(10); // Haptic for Android
+    }
+  });
+});
 
 </script>
-
-
 </body>
 </html>
