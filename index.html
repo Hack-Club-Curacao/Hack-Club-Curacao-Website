@@ -239,7 +239,19 @@
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
         };
+
+
+
+        
+document.querySelectorAll('button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    if (navigator.vibrate) {
+      navigator.vibrate(75); // Haptic for Android
+    }
+  });
+});
     </script>
 </body>
 
 </html>
+
