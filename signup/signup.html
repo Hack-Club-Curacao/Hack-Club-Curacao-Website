@@ -425,7 +425,7 @@ document.addEventListener('keydown', (e) => {
 document.querySelectorAll('button').forEach(btn => {
   btn.addEventListener('click', () => {
     if (navigator.vibrate) {
-      navigator.vibrate(10); // Haptic for Android
+      navigator.vibrate(75); // Haptic for Android
     }
   });
 });
@@ -433,3 +433,4 @@ document.querySelectorAll('button').forEach(btn => {
 </script>
 </body>
 </html>
+
