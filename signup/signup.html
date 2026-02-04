@@ -21,44 +21,51 @@
     margin: 0; padding: 0;
     height: 100vh;
     overflow: hidden;
-    background: linear-gradient(150deg, #000080, #FDE047);  
+    background: #000080;
+    overflow-y: auto;  
     display: flex; justify-content: center; align-items: center;
   }
 
-  /* --- CONTINUOUS FLOWING BACKGROUND --- */
-  .circles { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; z-index: -1; margin: 0; padding: 0; }
-  .circles li { position: absolute; display: block; list-style: none; width: 20px; height: 20px; background: rgba(255, 255, 255, 0.15); bottom: -150px; animation: floatUp 25s infinite linear; }
-  .circles li:nth-child(1) { left: 25%; width: 80px; height: 80px; animation-delay: -5s; border-radius: 50%; }
-  .circles li:nth-child(2) { left: 10%; width: 30px; height: 30px; animation-delay: -12s; animation-duration: 20s; border-radius: 0%; }
-  .circles li:nth-child(3) { left: 70%; width: 50px; height: 50px; animation-delay: -2s; animation-duration: 30s; border-radius: 20%; transform: rotate(45deg); }
-  .circles li:nth-child(4) { left: 40%; width: 60px; height: 60px; animation-delay: -18s; border-radius: 50%; }
-  .circles li:nth-child(5) { left: 65%; width: 25px; height: 25px; animation-delay: -25s; border-radius: 0%; }
-  .circles li:nth-child(6) { left: 85%; width: 90px; height: 90px; animation-delay: -8s; animation-duration: 40s; border-radius: 10px; }
-  .circles li:nth-child(7) { left: 15%; width: 45px; height: 45px; animation-delay: -15s; border-radius: 50%; }
-  .circles li:nth-child(8) { left: 55%; width: 35px; height: 35px; animation-delay: -22s; animation-duration: 18s; transform: rotate(20deg); }
-  .circles li:nth-child(9) { left: 33%; width: 15px; height: 15px; animation-delay: -10s; border-radius: 50%; }
-  .circles li:nth-child(10) { left: 90%; width: 40px; height: 40px; animation-delay: -30s; border-radius: 0%; }
+ #regForm h1, 
+#regForm p, 
+#regForm label, 
+#regForm strong { 
+  color: #ffffff !important; 
+}
 
-  @keyframes floatUp {
-    0%{ transform: translateY(0) rotate(0deg); opacity: 0; }
-    20%{ opacity: 0.6; }
-    100%{ transform: translateY(-110vh) rotate(360deg); opacity: 0; }
-  }
+#regForm p { 
+  opacity: 0.9; 
+}
+/* Fix the 'Important' box on the last page */
+#thankYou div {
+  background: rgba(253, 224, 71, 0.15) !important;
+  color: #ffffff !important;
+  border: 2px solid #FDE047 !important;
+  box-shadow: 0 0 15px rgba(253, 224, 71, 0.2);
+}
 
   /* Form Card */
   #regForm { 
-    background: var(--white); 
+    background: rgba(255, 255, 255, 0.05); 
+    backdrop-filter: blur(16px); 
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.1); 
+    border-radius: 30px;
     padding: 40px; 
-    border-radius: 20px; 
     width: 90%; 
     max-width: 500px; 
-    box-shadow: 0 15px 35px rgba(0,0,0,0.2); 
     position: relative; 
     min-height: 450px; 
     display: flex; 
     flex-direction: column; 
-    justify-content: center; 
+    justify-content: center;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   }
+  #regForm:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(253, 224, 71, 0.4);
+  }
+
 
   h1 { text-align: center; color: var(--primary); margin-top: 0; }
 
@@ -80,45 +87,79 @@
   .btn-group { display: flex; justify-content: space-between; margin-top: auto; padding-top: 20px; gap: 15px; }
 
   button {
-    position: relative;
-    background: linear-gradient(150deg, #00008057, #FDE047);
-    backdrop-filter: blur(calc(12px + (var(--press, 0) * 12px))) saturate(180%);
-    -webkit-backdrop-filter: blur(calc(12px + (var(--press, 0) * 12px))) saturate(180%);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    color: #fff;
-    padding: 14px 28px;
-    font-size: 16px;
-    font-weight: 800;
-    border-radius: 14px;
-    cursor: pointer;
-    font-family: 'Phantom Sans';
-    transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), background 0.3s ease, backdrop-filter 0.3s ease;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-    transform: scale(calc(1 + (var(--press, 0) * 0.08))) translateY(calc(var(--press, 0) * -2px));
-    user-select: none;
-    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
-  }
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: 14px 28px;
+  font-size: 16px;
+  font-weight: 800;
+  border-radius: 14px;
+  cursor: pointer;
+  font-family: 'Phantom Sans';
+  transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1.2);
+  text-transform: uppercase;
+}
+
+button:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: #FDE047;
+  transform: scale(1.05);
+}
+
+button:active {
+  transform: scale(0.92);
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(25px);
+  border-color: rgba(253, 224, 71, 0.8);
+  transition: all 0.1s ease;
+}
 
   /* Round Home Button - MOVED TO TOP LEFT */
   .home-btn {
     position: absolute; top: 15px; left: 15px; width: 45px; height: 45px;
     border-radius: 50% !important; padding: 0 !important; display: flex;
     justify-content: center; align-items: center; z-index: 100;
-    background: linear-gradient(150deg, #00008057, #FDE047) !important;
+    background: rgba(255, 255, 255, 0.1) !important;
+    backdrop-filter: blur(10px);
   }
   .home-btn svg { width: 22px; height: 22px; fill: white; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.5)); }
 
   .tab { display: none; animation: fadeEffect 0.6s; flex-grow: 1; }
   @keyframes fadeEffect { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
   .iti { width: 100%; margin-bottom: 10px; }
+
+
+  #canvas-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  pointer-events: none;
+}
+
+
+
+
+#three-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1; /* Behind everything */
+  pointer-events: none;
+}
 </style>
 </head>
 <body>
+  <div id="canvas-container"></div>
+  <canvas id="three-canvas"></canvas>
+  
 
-<ul class="circles">
-  <li></li><li></li><li></li><li></li><li></li>
-  <li></li><li></li><li></li><li></li><li></li>
-</ul>
 
 <form id="regForm" action="">
   <button type="button" class="home-btn" onclick="window.location.href='../index.html'">
@@ -276,7 +317,101 @@ window.addEventListener('touchmove', doDrag, {passive: false});
 window.addEventListener('touchend', stopDrag);
 
 
-</script>
-</body>
+function validateForm() {
+  let valid = true;
+  let x = document.getElementsByClassName("tab");
+  
+  // Get all inputs in the current tab
+  let inputs = x[currentTab].querySelectorAll("input");
+  
+  // Tabs 0 (Welcome), 1 (Contact), and 2 (Emergency Contact 1) are required
+  // Tab 3 (Emergency Contact 2) is optional
+  if (currentTab < 3) {
+    // Basic empty field check
+    for (let i = 0; i < inputs.length; i++) {
+      if (inputs[i].value.trim() === "") {
+        inputs[i].classList.add("invalid");
+        valid = false;
+      } else {
+        inputs[i].classList.remove("invalid");
+      }
+    }
 
+    // Specific validation and error message display for Contact Info tab
+    if (currentTab === 1) {
+      const emailInput = document.querySelector('input[name="email"]');
+      const emailError = document.getElementById("email-error");
+      const phoneError = document.getElementById("phone-error");
+      const ageError = document.getElementById("age-error");
+      
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      const isEmailValid = emailRegex.test(emailInput.value);
+      const isPhoneValid = phoneInput.isValidNumber();
+      
+      // Age check logic
+      const dobValue = document.getElementById("dob").value;
+      let isAgeValid = false;
+      if (dobValue) {
+        const birthDate = new Date(dobValue);
+        const age = Math.floor((new Date() - birthDate) / 31557600000);
+        isAgeValid = (age >= 13 && age <= 18);
+      }
+
+      // Toggle Visibility of error messages
+      emailError.style.display = isEmailValid ? "none" : "block";
+      phoneError.style.display = isPhoneValid ? "none" : "block";
+      ageError.style.display = isAgeValid ? "none" : "block";
+
+      if (!isEmailValid || !isPhoneValid || !isAgeValid) valid = false;
+    }
+    
+    // Specific validation for Emergency Contact 1 phone
+    if (currentTab === 2) {
+      if (!ec1PhoneInput.isValidNumber()) {
+        document.querySelector("#ec1_phone").classList.add("invalid");
+        valid = false;
+      } else {
+        document.querySelector("#ec1_phone").classList.remove("invalid");
+      }
+    }
+  }
+
+  return valid;
+}
+
+let scene, camera, renderer, sphere;
+
+function init3D() {
+  scene = new THREE.Scene();
+  camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+  renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('three-canvas'), alpha: true, antialias: true });
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  
+  // Cool wireframe sphere like the main site
+  const geometry = new THREE.IcosahedronGeometry(10, 2);
+  const material = new THREE.MeshNormalMaterial({ wireframe: true, transparent: true, opacity: 0.5 });
+  sphere = new THREE.Mesh(geometry, material);
+  scene.add(sphere);
+
+  camera.position.z = 30;
+
+  function animate() {
+    requestAnimationFrame(animate);
+    sphere.rotation.x += 0.005;
+    sphere.rotation.y += 0.005;
+    renderer.render(scene, camera);
+  }
+  animate();
+}
+
+// Add this line inside your existing showTab(n) function:
+// sphere.scale.set(1 + n * 0.3, 1 + n * 0.3, 1 + n * 0.3);
+
+window.addEventListener('load', init3D);
+
+
+</script>
+
+
+</body>
 </html>
