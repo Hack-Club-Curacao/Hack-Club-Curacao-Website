@@ -411,15 +411,6 @@ window.addEventListener('touchmove', doDrag, {passive: false});
 window.addEventListener('touchend', stopDrag);
 
 
-document.addEventListener('keydown', (e) => {
-  if (e.key.toLowerCase() === 'd') {
-    let x = document.getElementsByClassName("tab");
-    x[currentTab].style.display = "none";
-    currentTab = (currentTab + 1) % x.length;
-    showTab(currentTab);
-  }
-});
-
 
 
 document.querySelectorAll('button').forEach(btn => {
@@ -433,5 +424,6 @@ document.querySelectorAll('button').forEach(btn => {
 </script>
 </body>
 </html>
+
 
 
